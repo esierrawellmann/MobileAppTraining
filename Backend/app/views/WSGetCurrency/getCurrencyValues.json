@@ -1,0 +1,20 @@
+
+ {
+ "successful":true,
+ "data":{
+     "variables":[
+        #{list items:variable, as:'item'}
+             {"variable":
+                 {
+                     "moneda":${item.moneda},
+                     "descripcion":"${item.descripcion}"
+                 }
+             }
+             #{if item_index != variable.size()   }
+                 ,
+             #{/if}
+
+         #{/list}
+     ]
+     }
+ }

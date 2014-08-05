@@ -1,0 +1,6 @@
+ErrorType(1):
+   code: 1
+   name: No Response from Web Server
+ErrorType(2):
+  code: 2
+  name: Timeout

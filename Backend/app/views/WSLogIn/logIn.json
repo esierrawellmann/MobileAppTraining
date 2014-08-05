@@ -1,0 +1,7 @@
+{
+    "successful":true,
+    "data":{
+        "loginSucceed":${loginSucceed}
+        , "userId":${(userId==null) ? 0:userId}
+    }
+}

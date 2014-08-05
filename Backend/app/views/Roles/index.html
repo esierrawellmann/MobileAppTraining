@@ -1,0 +1,112 @@
+#{extends 'main.html' /}
+<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
+<script>
+	$(function () {
+        $('.roles-menu-a').addClass('active');
+        
+    });
+    angular.module('roles', ['ui.bootstrap']);
+    function controller($scope,$http,$modal, $log) {
+        $scope.open = function (size) {
+            var modalInstance = $modal.open({
+              templateUrl: 'myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size
+            });
+            modalInstance.result.then(function (rol) {
+
+                $scope.addNewRole(rol);
+              //$scope.addNewRole(rol);
+            }, function () {
+              
+            });
+        };
+        angular.element(document).ready(function () {
+            $scope.getRoles();
+        });
+
+        $scope.getRoles = function() {
+            $http({method: 'GET', url: '@{Roles.getRoles}'}).
+                success(function(data, status, headers, config) {
+                  // this callback will be called asynchronously
+                  // when the response is available
+                  $scope.roles = angular.fromJson(data);
+
+                }).
+                error(function(data, status, headers, config) {
+                  // called asynchronously if an error occurs
+                  // or server returns response with an error status.
+                });
+        };
+
+        $scope.addNewRole = function(rol){
+            $http({method: 'GET', url: '@{Roles.addNewRoleAction}/'+rol.name}).
+                success(function(data, status, headers, config) {
+                  // this callback will be called asynchronously
+                  // when the response is available
+                  var newRole = angular.fromJson(data);
+                  $scope.roles.push(rol);
+
+                }).
+                error(function(data, status, headers, config) {
+                  // called asynchronously if an error occurs
+                  // or server returns response with an error status.
+                });
+        };
+    };
+    var ModalInstanceCtrl = function ($scope, $modalInstance) {
+      $scope.rol  = [];
+      $scope.ok = function () {
+        
+        $modalInstance.close($scope.rol);
+      };
+
+      $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+      };
+    };
+
+</script>
+<div ng-app="roles">
+    <div ng-controller="controller">
+        <button class="btn btn-default pull-right" ng-click="open()">Add New Role</button>
+        <h1>Roles</h1>
+        
+        <table class="table table-striped">
+            <tr>
+                <th>Select Rol</th>
+                <th>Role Names</th>
+            </tr>
+            <tr ng-repeat="rol in roles">
+                <td>
+                    <button ng-click="getRoles()" type="button" class="btn btn-default select " value="{{rol.id}}">Select</button>
+                </td>
+                <td>
+                    {{rol.name}}
+                </td>
+            </tr>
+        </table>
+
+        <script type="text/ng-template" id="myModalContent.html">
+            <div class="modal-header">
+                <h3 class="modal-title">Add a Role</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="addRolInput">Add Rol</label>
+                                <input ng-model="rol.name" type="text" class="form-control" id="addRolInput" placeholder="Enter a new Rol name">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" ng-click="ok()">OK</button>
+                <button class="btn btn-default" ng-click="cancel()">Cancel</button>
+            </div>
+        </script>
+    </div>
+</div>

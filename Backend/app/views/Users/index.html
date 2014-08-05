@@ -1,0 +1,124 @@
+#{extends 'main.html' /}
+<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
+<script>
+	$(function () {
+        $('.user-menu-a').addClass('active');
+        
+    });
+    angular.module('users', ['ui.bootstrap']);
+    function controller($scope,$http,$modal, $log) {
+        $scope.open = function (size) {
+            var modalInstance = $modal.open({
+              templateUrl: 'myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size,
+              resolve: {
+                initialData: function () {
+                  return $scope.initialData;
+                }
+              }
+            });
+            modalInstance.result.then(function (user) {
+                $scope.addNewUser(user);
+
+            }, function () {
+              
+            });
+        };
+        angular.element(document).ready(function () {
+            $scope.getUsers();
+        });
+
+        $scope.getUsers = function() {
+            $http({method: 'GET', url: '@{Users.getUsers}'}).
+                success(function(data, status, headers, config) {
+                  // this callback will be called asynchronously
+                  // when the response is available
+                  $scope.initialData = angular.fromJson(data);
+                }).
+                error(function(data, status, headers, config) {
+                  // called asynchronously if an error occurs
+                  // or server returns response with an error status.
+                });
+        };
+        $scope.addNewUser = function(user){
+            $.ajax({
+                url: '@{Users.addUsers}',
+                type: "POST",
+                data: {
+                    data:'{"name":"'+user.name+'","password":"'+user.password+'","status":"'+user.statusField+'","rol":{"id":'+user.rol.id+'}}',
+                },
+                dataType: "json",
+                success: function(user){
+                    $scope.initialData.users.push(user);
+                }
+            });
+        }
+    }
+    var ModalInstanceCtrl = function ($scope, $modalInstance,initialData) {
+      $scope.user  = [];
+      $scope.status =["Disabled","Active","Not Active"];
+      $scope.initialData = initialData;
+      $scope.ok = function () {
+        
+        $modalInstance.close($scope.user);
+      };
+
+      $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+      };
+    };
+</script>
+<div ng-app="users">
+    <div ng-controller="controller">
+        <button class="btn btn-default pull-right" ng-click="open()">Add New User</button>
+        <h1>Users</h1>
+        
+        <table class="table table-striped">
+            <tr>
+                <th>User Name</th>
+                <th>Status</th>
+                <th>Role</th>
+            </tr>
+            <tr ng-repeat="user in initialData.users">
+                <td>{{user.username}}</td>
+                <td><a class="a-label-status-active" ng-class="{'a-label-status-active': user.status == 1 , 'a-label-status-blocked': user.status != 1}">{{user.status>0 ? user.status == 1 ? 'Active' : 'Not Active'   : 'Blocked'}}</a></td>
+                <td>{{user.rol.name}}</td>
+
+            </tr>
+        </table>
+        <script type="text/ng-template" id="myModalContent.html">
+            <div class="modal-header">
+                <h3 class="modal-title">Add a User</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+            <div class="col-md-12">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="addUserInput">Username</label>
+                        <input ng-model="user.name" type="text" class="form-control" id="addUserInput" placeholder="Username">
+                    </div>
+                    <div class="form-group">
+                        <label for="userPassword">Password</label>
+                        <input ng-model="user.password" type="password" class="form-control" id="userPassword" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <label for="userStatus">Status</label>
+                        <select id="user-status-option" ng-model="user.statusField" class="form-control" ng-options="status.indexOf(stat) as stat for stat in status"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="userStatus">Roles</label>
+                        <select id="user-status-option" ng-model="user.rol" class="form-control" ng-options="rol.name for rol in initialData.roles"></select>
+                    </div>
+                </form>
+            </div>
+        </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" ng-click="ok()">OK</button>
+                <button class="btn btn-default" ng-click="cancel()">Cancel</button>
+            </div>
+        </script>
+    </div>
+</div>

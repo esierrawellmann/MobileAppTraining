@@ -1,0 +1,9 @@
+TransactionType(1):
+   code: 1
+   name: Get Exchange Rate
+TransactionType(2):
+  code: 2
+  name: Get Exchange Rate By Date
+TransactionType(3):
+  code: 3
+  name: Get Variables

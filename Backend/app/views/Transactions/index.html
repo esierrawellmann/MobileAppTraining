@@ -1,0 +1,46 @@
+#{extends 'main.html' /}
+<script>
+	$(function () {
+        $('.transacctions-menu-a').addClass('active');
+        
+    });
+    $(document).ready(function() {
+        $("#transactions").dataTable({
+        "destroy": true,
+        "serverSide": true,
+        ajax:{
+            url: "@{getTransactions()}",
+            type: "POST"
+        },
+        "columns": [
+            { "data": "date" },
+            { "data": "responsetime" },
+            { "data": "status" },
+            { "data": "errortype" },
+            { "data": "transactiontype"},
+            { "data": "getuser"},
+            { "data": "deviceid"}
+        ],
+        "lengthMenu": [
+            [5, 10, 25, 50, 100],
+            [5, 10, 25, 50, 100]
+        ],
+        "order": [ 0, 'desc' ]
+    });
+
+} );
+</script>
+<h1>Transactions</h1>
+    <table id="transactions" class="fixedLayout table table-striped table-bordered table-condensed" cellpadding="0" cellspacing="0">
+        <thead>
+        <tr class="table-head">
+            <th>Date</th>
+            <th>Request Response Time</th>
+            <th>Status</th>
+            <th>Error Type</th>
+            <th>Transaction Type</th>
+            <th>Username</th>
+            <th>Device</th>
+        </tr>
+        </thead>
+    </table>

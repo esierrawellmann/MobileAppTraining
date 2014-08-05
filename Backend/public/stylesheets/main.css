@@ -1,0 +1,31 @@
+.a-label-status-active
+{
+    min-width: 60px;
+    background: #3a87ad;
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
+
+.a-label-status-blocked
+{
+    min-width: 60px;
+    display: inline;
+    background: rgb(189, 63, 66);
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}

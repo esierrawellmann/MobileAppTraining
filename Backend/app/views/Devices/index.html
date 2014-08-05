@@ -1,0 +1,32 @@
+#{extends 'main.html' /}
+<script>
+	$(function () {
+        $('.devices-menu-a').addClass('active');
+        
+    });
+</script>
+    <div >
+		<h1>Devices</h1>
+		<table class="fixedLayout table table-striped table-bordered table-condensed" cellpadding="0" cellspacing="0">
+		<thead>
+			<tr class="table-head">
+				<th>Device UID</th>
+				<th>OS</th>
+				<th>App Version</th>
+				<th>Device OS Version</th>
+				<th>Owner</th>
+			</tr>
+		</thead>
+		<tbody>
+			#{list items:devices, as:'device'}
+				<tr >
+					<td >${device.getDeviceId()}</td>
+					<td >${device.getOs()}</td>
+					<td >${device.getAppVersion()}</td>
+					<td >${device.getDeviceOSVersion()}</td>
+					<td >${device.getUser().getUsername()}</td>
+				</tr>
+			#{/list}
+		</tbody>
+	</table>
+	</div>

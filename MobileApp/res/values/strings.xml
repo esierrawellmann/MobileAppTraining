@@ -1,0 +1,19 @@
+<resources>
+
+    <string name="app_name">MobileApp</string>
+    <string name="basedialoginitial">Retrieving Information</string>
+    <string name="newstring">String</string>
+    <string name="default_error_message">Error</string>
+	<string name="app_title">Currency Exchange Rate</string>
+	<string name="welcome">Welcome</string>
+	<string name="select_options">Select an Action</string>
+	<string name="choose_your_rate_option">Choose A Rate Option</string>
+	<string name="getting_information">Getting Information</string>
+	<string name="combination">User password combination was invalid</string>
+	<string name="dialog_date_or_day">Select your option for Exchange Rate</string>
+	<string name="day">Day</string>
+	<string name="date">Date</string>
+	
+	 
+	
+</resources>

@@ -1,0 +1,40 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+#Application Controllers
+GET     /                                       Application.index
+GET     /secure/index                           Application.index
+
+# Users Routes
+GET     /users/index                            Users.index
+GET     /users/getusers                         Users.getUsers
+
+#Devices
+GET     /devices/index                          Devices.index
+GET     /devices/getdevices                     Devices.getDevices
+
+#Roles Routes
+GET     /roles/index                            Roles.index
+GET     /roles/getroles                         Roles.getRoles
+GET     /roles/addnewroleaction/{rolName}       Roles.addNewRoleAction
+#Device Routes
+GET     /devices/index                          Devices.index
+#Transaction Routes
+GET     /transactions/index                     Transactions.index
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+
+# Servicios Web
+POST  	/Services/getexchangerate							WSGetCurrency.getExchangeRate
+POST	/Services/getexchangeratebydate     				WSGetCurrency.getExchangeRateByDate
+POST    /Services/requestinformation                        WSGetCurrency.requestInformation
+POST    /Services/login                                     WSLogin.logIn
+POST    /Services/getcurrencyvalues                         WSGetCurrency.getCurrencyValues
+# Catch all
+*       /{controller}/{action}                  {controller}.{action}

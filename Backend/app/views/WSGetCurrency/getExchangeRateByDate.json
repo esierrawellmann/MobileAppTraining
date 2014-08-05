@@ -1,0 +1,6 @@
+{
+"successful":true,
+"data":{
+    "exchangeRate":"${exchangeRate}"
+    }
+}
