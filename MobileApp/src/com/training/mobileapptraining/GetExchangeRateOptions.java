@@ -2,6 +2,7 @@ package com.training.mobileapptraining;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 import com.digitalgeko.mobileapptraining.dto.response.GetCurrencyValuesResponse;
 import com.digitalgeko.mobileapptraining.dto.response.GetCurrencyValuesResponse.VariableEnvelop;
 import com.digitalgeko.mobileapptraining.dto.response.GetExchangeRateByDateResponse;
@@ -10,6 +11,7 @@ import com.training.mobileapptraining.R;
 import com.training.mobileapptraining.webservice.GetCurrencyValuesClient;
 import com.training.mobileapptraining.webservice.GetExchangeRateByDateClient;
 import com.training.mobileapptraining.webservice.GetExchangeRateClient;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -22,6 +24,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -228,7 +231,7 @@ public class GetExchangeRateOptions extends Activity {
 		@Override
 	    public Dialog onCreateDialog(Bundle savedInstanceState) {
 	        // Use the Builder class for convenient dialog construction
-	        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+	        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()); 
 	        builder.setMessage(getOption() + " " +getCurrency())
 	               .setPositiveButton(R.string.day, new DialogInterface.OnClickListener() {
 	                   public void onClick(DialogInterface dialog, int id) {

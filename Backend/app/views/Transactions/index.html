@@ -4,15 +4,37 @@
         $('.transacctions-menu-a').addClass('active');
         
     });
+    var dt;
     $(document).ready(function() {
-        $("#transactions").dataTable({
+
+    $("#btnSearch").click(function(event) {
+        /* Act on the event */
+        search();
+        $('#transactions_wrapper').css('display','block');
+        
+    });
+
+    function search(){
+        dt = $("#transactions").DataTable({
         "destroy": true,
         "serverSide": true,
         ajax:{
             url: "@{getTransactions()}",
-            type: "POST"
+            type: "POST",
+            data:{
+                initDate:initDate.value,
+                endDate:endDate.value,
+                username:username.value,
+                device:device.value
+            }
         },
         "columns": [
+            {
+                "class":          "details-control",
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ""
+            },
             { "data": "date" },
             { "data": "responsetime" },
             { "data": "status" },
@@ -28,14 +50,115 @@
         "order": [ 0, 'desc' ]
     });
 
-} );
+     var detailRows = [];
+      $('#transactions tbody').on( 'click', 'tr td:first-child', function () {
+        var tr = $(this).closest('tr');
+        var row = dt.row(tr);
+        var idx = $.inArray( tr.attr('id'), detailRows );
+        if ( row.child.isShown() ) {
+            tr.removeClass( 'details' );
+            row.child.hide();
+            // Remove from the 'open' array
+            detailRows.splice( idx, 1 );
+        }
+        else {
+            tr.addClass( 'details' );
+            row.child( format( row.data() ) ).show();
+
+            // Add to the 'open' array
+            if ( idx === -1 ) {
+                detailRows.push( tr.attr('id') );
+            }
+        }
+    } );
+
+    // On each draw, loop over the `detailRows` array and show any child rows
+    dt.on( 'draw', function () {
+        $.each( detailRows, function ( i, id ) {
+            $('#'+id+' td:first-child').trigger( 'click' );
+        } );
+    } );
+
+    }
+    function format ( d ) {
+    // `d` is the original data object for the row
+        return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+            '<tr>'+
+                '<td>Request Data:</td>'+
+                '<td><textarea style="width:600px; height:100px;">'+d.request+'</textarea></td>'+
+            '</tr>'+
+            '<tr>'+
+                '<td>Response Data:</td>'+
+                '<td><textarea style="width:600px; height:100px;">'+d.response+'</textarea></td>'+
+            '</tr>'+
+        '</table>';
+    }
+
+    var nowTemp = new Date();
+    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+    var checkin = $('#initDate').datepicker().on('changeDate', function(ev) {
+      if (ev.date.valueOf() > checkout.date.valueOf()) {
+        var newDate = new Date(ev.date)
+        newDate.setDate(newDate.getDate() + 1);
+        checkout.setValue(newDate);
+      }
+      checkin.hide();
+      $('#endDate')[0].focus();
+    }).data('datepicker');
+    var checkout = $('#endDate').datepicker({
+      onRender: function(date) {
+        return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
+      }
+    }).on('changeDate', function(ev) {
+      checkout.hide();
+    }).data('datepicker');
+        search();
+});
 </script>
+
 <h1>Transactions</h1>
+
+    <div class="form-container">
+        <!-- Button trigger modal -->
+
+        <form role="form" class="well">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="initDate">Start Date</label>
+                                <input type="text" class="form-control" id="initDate" name="initDate" value="${new Date().format('MM/dd/YYYY')}" placeholder="Select a date" readonly>
+                                </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="endDate">End Date</label>
+                                <input type="text" class="form-control" id="endDate" name="endDate" value="${new Date().format('MM/dd/YYYY')}" placeholder="Select a date" readonly>
+                                </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username"  name="username" placeholder="Username">
+                    </div> 
+                    <div class="form-group">
+                        <label for="device">Device</label>
+                        <input type="text" class="form-control" id="device" name="device" placeholder="Device">
+                    </div>
+                    <button type="button" class="btn btn-default" id="btnSearch">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
     <table id="transactions" class="fixedLayout table table-striped table-bordered table-condensed" cellpadding="0" cellspacing="0">
         <thead>
         <tr class="table-head">
+            <th>Action</th>
             <th>Date</th>
-            <th>Request Response Time</th>
+            <th>Response Time</th>
             <th>Status</th>
             <th>Error Type</th>
             <th>Transaction Type</th>
@@ -43,4 +166,5 @@
             <th>Device</th>
         </tr>
         </thead>
+        <tbody></tbody>
     </table>

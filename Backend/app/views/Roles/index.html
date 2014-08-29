@@ -3,34 +3,67 @@
 <script>
 	$(function () {
         $('.roles-menu-a').addClass('active');
-        
     });
     angular.module('roles', ['ui.bootstrap']);
     function controller($scope,$http,$modal, $log) {
+        $scope.deleteRol = function(rol){
+          $http.post('@{Roles.deleteRol}',rol).success(function(data){
+                  if(data.success){
+                    var index = $scope.roles.indexOf(rol);
+                    $scope.roles.splice(index,1)   
+                    alert("Rol was successfully deleted");
+                  }
+              });
+        };
         $scope.open = function (size) {
             var modalInstance = $modal.open({
               templateUrl: 'myModalContent.html',
               controller: ModalInstanceCtrl,
-              size: size
+              size: size,
+              resolve:{
+                rol: function(){
+                  return [];
+                }
+              }
             });
             modalInstance.result.then(function (rol) {
-
                 $scope.addNewRole(rol);
-              //$scope.addNewRole(rol);
             }, function () {
               
             });
         };
+
+        $scope.editRole = function (rol,size) {
+            var modalInstance = $modal.open({
+              templateUrl: 'myModalContent.html',
+              controller: ModalInstanceCtrl,
+              size: size,
+              resolve:{
+                rol: function(){
+                  return rol;
+                }
+              }
+            });
+            modalInstance.result.then(function (rol) {
+              $http.post('@{Roles.updateRol}',rol).success(function(data){
+                  console.log(data);
+              });
+            }, function () {
+              
+            });
+        };
+
         angular.element(document).ready(function () {
             $scope.getRoles();
         });
 
         $scope.getRoles = function() {
-            $http({method: 'GET', url: '@{Roles.getRoles}'}).
+            $http({method: 'GET', url: '@{Roles.getRoles}', headers:"Accept:application/json"}).
                 success(function(data, status, headers, config) {
                   // this callback will be called asynchronously
                   // when the response is available
-                  $scope.roles = angular.fromJson(data);
+                  $scope.data= angular.fromJson(data);
+                  $scope.roles = $scope.data.data.roles;
 
                 }).
                 error(function(data, status, headers, config) {
@@ -40,27 +73,24 @@
         };
 
         $scope.addNewRole = function(rol){
-            $http({method: 'GET', url: '@{Roles.addNewRoleAction}/'+rol.name}).
-                success(function(data, status, headers, config) {
-                  // this callback will be called asynchronously
-                  // when the response is available
-                  var newRole = angular.fromJson(data);
-                  $scope.roles.push(rol);
-
-                }).
-                error(function(data, status, headers, config) {
-                  // called asynchronously if an error occurs
-                  // or server returns response with an error status.
-                });
+          $http({method: 'GET', url: '@{Roles.addNewRoleAction}/'+rol.name}).
+              success(function(data, status, headers, config) {
+                // this callback will be called asynchronously
+                // when the response is available
+                var newRole = angular.fromJson(data);
+                $scope.roles.push(newRole);
+              }).
+              error(function(data, status, headers, config) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+              });
         };
     };
-    var ModalInstanceCtrl = function ($scope, $modalInstance) {
-      $scope.rol  = [];
+    var ModalInstanceCtrl = function ($scope, $modalInstance,rol) {
+      $scope.rol  = rol;
       $scope.ok = function () {
-        
         $modalInstance.close($scope.rol);
       };
-
       $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
       };
@@ -69,23 +99,35 @@
 </script>
 <div ng-app="roles">
     <div ng-controller="controller">
-        <button class="btn btn-default pull-right" ng-click="open()">Add New Role</button>
-        <h1>Roles</h1>
         
-        <table class="table table-striped">
-            <tr>
-                <th>Select Rol</th>
-                <th>Role Names</th>
-            </tr>
-            <tr ng-repeat="rol in roles">
-                <td>
-                    <button ng-click="getRoles()" type="button" class="btn btn-default select " value="{{rol.id}}">Select</button>
-                </td>
-                <td>
-                    {{rol.name}}
-                </td>
-            </tr>
-        </table>
+       <div class="panel panel-default">
+        <div class="row">
+          <div class="panel-body">
+            <div class="col-md-3">
+
+              <span><button class="btn btn-default btn-xs pull-right" ng-click="open()">Add New Role</button>
+              <h1>Roles</h1></span>
+              
+              <table class="table table-striped">
+                <tr>
+                    <th>Role Names</th>
+                </tr>
+                <tr ng-repeat="rol in roles">
+                    
+                    <td>
+                        {{rol.name}}
+                    </td>
+                    <!--<td>
+                        <button type="button" class="btn btn-default btn-xs" ng-click="editRole(rol)">Update</button>
+                        <button type="button" class="btn btn-default btn-xs" ng-click="deleteRol(rol)">Delete</button>
+                    </td> -->
+                </tr>
+              </table>
+            </div>
+            <div class="col-md-9">.col-md-6</div>
+            </div>
+          </div>
+        </div>
 
         <script type="text/ng-template" id="myModalContent.html">
             <div class="modal-header">

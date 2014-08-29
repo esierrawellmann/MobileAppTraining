@@ -3,10 +3,8 @@ package models;
 import play.data.validation.Required;
 import play.db.jpa.Model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by renatosierra on 7/16/14.
@@ -18,11 +16,22 @@ public class User extends Model {
     @Column(nullable=true)
     String password;
     @Column(nullable=true)
-    String status;
+    int status;
     @Required
     @ManyToOne
     @JoinColumn(nullable=false)
     Rol rol;
+
+    public List<User_Permission> getPermission() {
+        return permission;
+    }
+
+    public void setPermission(List<User_Permission> permission) {
+        this.permission = permission;
+    }
+
+    @OneToMany(mappedBy = "permission",cascade = CascadeType.PERSIST )
+    List<User_Permission> permission;
 
     public String getUsername() {
         return username;
@@ -40,11 +49,11 @@ public class User extends Model {
         this.password = password;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

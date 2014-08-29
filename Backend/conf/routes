@@ -7,6 +7,17 @@
 GET     /                                       Application.index
 GET     /secure/index                           Application.index
 
+#Dock
+
+GET     /dock/index                             Dock.index
+
+#PDFPreview
+GET     /pdf/index                              PDFPreview.index
+GET     /pdf/getpdf                             PDFPreview.getPdf
+
+#Chat
+WS   /hello            Chat.hello
+
 # Users Routes
 GET     /users/index                            Users.index
 GET     /users/getusers                         Users.getUsers
@@ -23,6 +34,7 @@ GET     /roles/addnewroleaction/{rolName}       Roles.addNewRoleAction
 GET     /devices/index                          Devices.index
 #Transaction Routes
 GET     /transactions/index                     Transactions.index
+GET     /transactions/transactions/searchtransactions  Transactions.searchTransactions
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

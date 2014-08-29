@@ -7,6 +7,29 @@
     });
     angular.module('users', ['ui.bootstrap']);
     function controller($scope,$http,$modal, $log) {
+        $scope.editUser = function(user,size){
+            var editUserModalInstance = $modal.open({
+              templateUrl: 'myModalContent.html',
+              controller: editUserModalInstanceCtrl,
+              size: size,
+              resolve: {
+                initialData: function () {
+                  return $scope.initialData;
+                },
+                user: function () {
+                  return user;
+                },
+                rol:function(){
+                    return  user.rol;
+                }
+              }
+            });
+            editUserModalInstance.result.then(function (editedUser) {
+                console.log(editedUser);
+            }, function () {
+              
+            });
+        };
         $scope.open = function (size) {
             var modalInstance = $modal.open({
               templateUrl: 'myModalContent.html',
@@ -42,11 +65,12 @@
                 });
         };
         $scope.addNewUser = function(user){
+          console.log(user);
             $.ajax({
                 url: '@{Users.addUsers}',
                 type: "POST",
                 data: {
-                    data:'{"name":"'+user.name+'","password":"'+user.password+'","status":"'+user.statusField+'","rol":{"id":'+user.rol.id+'}}',
+                    data:'{"name":"'+user.username+'","password":"'+user.password+'","status":'+user.status+',"rol":{"id":'+user.rol.id+'}}',
                 },
                 dataType: "json",
                 success: function(user){
@@ -54,20 +78,60 @@
                 }
             });
         }
+
     }
     var ModalInstanceCtrl = function ($scope, $modalInstance,initialData) {
-      $scope.user  = [];
+      $scope.new  = [];
       $scope.status =["Disabled","Active","Not Active"];
       $scope.initialData = initialData;
       $scope.ok = function () {
         
-        $modalInstance.close($scope.user);
+        $modalInstance.close($scope.new);
       };
 
       $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
       };
     };
+  var editUserModalInstanceCtrl = function ($scope,$http, $modalInstance,initialData,user) {
+    $scope.initialData = initialData;
+    $scope.new  = user;
+    $scope.status =["Disabled","Active","Not Active"];
+
+    $scope.ok = function () {
+      var index = functiontofindIndexByKeyValue($scope.initialData.roles, "id", $scope.new.rol.id);
+      $scope.new.rol = $scope.initialData.roles[index];
+
+    $http({ method: 'POST', 
+            url: '@{Users.editUsers}',
+            dataType:"json", 
+            data: $.param({data:$scope.new}),
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }).success(function(data, status, headers, config) {
+              alert("Rol was successfully updated");
+            }).
+            error(function(data, status, headers, config) {
+              // called asynchronously if an error occurs
+              // or server returns response with an error status.
+            });
+
+      $modalInstance.close($scope.new);
+    };
+    $scope.cancel = function () {
+      $modalInstance.dismiss('cancel');
+    };
+  };
+function functiontofindIndexByKeyValue(arraytosearch, key, valuetosearch) {
+ 
+  for (var i = 0; i < arraytosearch.length; i++) {
+    if (arraytosearch[i][key] == valuetosearch) {
+      return i;
+    }
+  }
+  return null;
+}
+ 
+
 </script>
 <div ng-app="users">
     <div ng-controller="controller">
@@ -79,12 +143,15 @@
                 <th>User Name</th>
                 <th>Status</th>
                 <th>Role</th>
+                <th>Actions</th>
             </tr>
             <tr ng-repeat="user in initialData.users">
                 <td>{{user.username}}</td>
                 <td><a class="a-label-status-active" ng-class="{'a-label-status-active': user.status == 1 , 'a-label-status-blocked': user.status != 1}">{{user.status>0 ? user.status == 1 ? 'Active' : 'Not Active'   : 'Blocked'}}</a></td>
                 <td>{{user.rol.name}}</td>
-
+                <td>
+                    <button type="button" class="btn btn-default btn-xs" ng-click="editUser(user)">Editar</button>
+                </td>
             </tr>
         </table>
         <script type="text/ng-template" id="myModalContent.html">
@@ -97,19 +164,19 @@
                 <form role="form">
                     <div class="form-group">
                         <label for="addUserInput">Username</label>
-                        <input ng-model="user.name" type="text" class="form-control" id="addUserInput" placeholder="Username">
+                        <input ng-model="new.username" type="text" class="form-control" id="addUserInput" placeholder="Username">
                     </div>
                     <div class="form-group">
                         <label for="userPassword">Password</label>
-                        <input ng-model="user.password" type="password" class="form-control" id="userPassword" placeholder="Password">
+                        <input ng-model="new.password" type="password" class="form-control" id="userPassword" placeholder="Password">
                     </div>
                     <div class="form-group">
                         <label for="userStatus">Status</label>
-                        <select id="user-status-option" ng-model="user.statusField" class="form-control" ng-options="status.indexOf(stat) as stat for stat in status"></select>
+                        <select id="user-status-option"  ng-model="new.status" class="form-control" ng-options="status.indexOf(stat) as stat for stat in status"></select>
                     </div>
                     <div class="form-group">
                         <label for="userStatus">Roles</label>
-                        <select id="user-status-option" ng-model="user.rol" class="form-control" ng-options="rol.name for rol in initialData.roles"></select>
+                        <select id="user-status-option" ng-model="new.rol.id" class="form-control" ng-options="rol.id as rol.name for rol in initialData.roles"></select>
                     </div>
                 </form>
             </div>

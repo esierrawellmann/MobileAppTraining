@@ -7,3 +7,6 @@ TransactionType(2):
 TransactionType(3):
   code: 3
   name: Get Variables
+TransactionType(4):
+  code: 4
+  name: Get Variables

@@ -2,8 +2,14 @@ package controllers;
 
 import models.Transaction;
 import play.Logger;
+import play.data.binding.As;
+import play.data.validation.Required;
+import play.data.validation.Validation;
 import play.mvc.Controller;
+import play.mvc.results.RenderJson;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -15,25 +21,27 @@ public class Transactions extends Controller {
         List<Transaction> transactions = Transaction.find("order by date desc").from(0).fetch(10);
         render(transactions);
     }
-    public static void getTransactions(int start, int length,List<Order> order ,Search search) {
-        List<Transaction> transactions;
-        String[] columns = {"date","response","responseTime","status","errorType","transactionType","user","device"};
-        Logger.info(search.value);
-        if(search.value !=""){
-           transactions = Transaction.find("select t from Transaction t inner join t.user u where concat(t.date , t.response , t.responseTime ,u.username) like '%"+search.value+"%'   order by "+  columns[order.get(0).column] +" "+ order.get(0).dir ).from(start).fetch(length);
-        }else{
-           transactions = Transaction.find("order by "+  columns[order.get(0).column] +" "+ order.get(0).dir ).from(start).fetch(length);
+    public static void getTransactions(int start, int length,List<Order> order ,Search search,@Required @As("MM/dd/yyyy") Date initDate ,@Required @As("MM/dd/yyyy") Date endDate,String username,String device) {
+
+        if(Validation.hasErrors()){
+            renderJSON("{\"success\":false}");
         }
+
+        List<Transaction> transactions;
+        String[] columns = {"t.date","t.response","t.responseTime","t.status","t.errorType","t.transactionType","u.username","d.deviceId"};
+        transactions = Transaction.find("select t from Transaction t inner join t.user u inner join t.device d  where  cast(t.date as date) between ? and ?  and  u.username like ? and d.deviceId like ? order by "+  columns[order.get(0).column] +" "+ order.get(0).dir, initDate, endDate, username+'%', device+'%').from(start).fetch(length);
+        Long transactionCout = Transaction.count("from Transaction t inner join t.user u inner join t.device d  where  cast( t.date as date ) between ? and ?  and  u.username like ? and d.deviceId like ? order by "+  columns[order.get(0).column] +" "+ order.get(0).dir, initDate, endDate, username+'%', device+'%');
         List<Object> data = new LinkedList<Object>();
         Map<String,Object> parentMap = new HashMap<String,Object>();
         Map<String,Object> map;
+        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         for(Transaction transaction : transactions){
             map = new HashMap<String,Object>();
-            map.put("date",transaction.getDate().toString());
-            //map.put("request",transaction.getRequest());
-            //map.put("response",transaction.getResponse());
+            map.put("date",df.format(transaction.getDate()) );
+            map.put("request",transaction.getRequest());
+            map.put("response",transaction.getResponse());
             map.put("responsetime",transaction.getResponseTime());
-            map.put("status",transaction.getStatus());
+            map.put("status",transaction.getStatus()==0? "<a class=\"a-label-status-active\">In Progress</a>": transaction.getStatus()== 1 ? "<a  class=\"a-label-status-blocked\">Failed</a>":"<a class=\"a-label-status-success\">Success</a>");
             map.put("errortype", transaction.getErrorType() != null ? transaction.getErrorType().getName() : "");
             map.put("transactiontype",transaction.getTransactionType().getName());
             map.put("getuser", transaction.getUser()!= null ?  transaction.getUser().getUsername() : "");
@@ -42,10 +50,10 @@ public class Transactions extends Controller {
         }
         parentMap.put("data", data);
         parentMap.put("recordsTotal",Transaction.count());
-        parentMap.put("recordsFiltered",Transaction.count());
-
+        parentMap.put("recordsFiltered",transactionCout);
 
         renderJSON(parentMap);
+
     }
     public class Order{
 

@@ -32,7 +32,6 @@ public class Transaction extends Model {
     @ManyToOne
     @JoinColumn(nullable=true, name = "TransactionType_id")
     TransactionType transactionType;
-    @Required
     @ManyToOne
     @JoinColumn(nullable=true, name="User_id")
     User user;

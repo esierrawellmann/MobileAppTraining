@@ -4,15 +4,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import models.Rol;
 import models.User;
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+
 import play.Logger;
 import play.libs.Crypto;
 import play.mvc.Controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +34,30 @@ public class Users extends Controller {
 
         renderJSON(initialData);
     }
+    public static  void editUsers(User data){
+        User updatedUser = User.findById(data.id);
+        updatedUser.save();
+        renderJSON(updatedUser);
+    }
+    public static  void testFunction(User data){
+        Logger.info(data.getUsername());
+        Logger.info(Crypto.decryptAES(data.getPassword()));
+        StringWriter writer = new StringWriter();
+        try {
+            IOUtils.copy(request.body, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String theString = writer.toString();
+        Logger.info(theString);
+        renderJSON("{\"data\":\"olakease\"}");
+    }
     public static void addUsers(String data){
         JsonParser parser = new JsonParser();
         JsonObject object = (JsonObject)parser.parse(data);
         String name = object.get("name").getAsString();
         String password = object.get("password").getAsString();
-        String status = object.get("status").getAsString();
+        int status = object.get("status").getAsInt();
         JsonObject rol = object.get("rol").getAsJsonObject();
         long rolId = rol.get("id").getAsLong();
 

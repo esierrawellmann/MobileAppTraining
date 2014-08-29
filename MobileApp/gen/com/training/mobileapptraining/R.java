@@ -858,10 +858,13 @@ containing a value of this type.
         public static final int abc_split_action_bar_is_narrow=0x7f070002;
     }
     public static final class color {
-        public static final int abc_search_url_text_holo=0x7f080003;
+        public static final int abc_search_url_text_holo=0x7f080006;
         public static final int abc_search_url_text_normal=0x7f080000;
         public static final int abc_search_url_text_pressed=0x7f080002;
         public static final int abc_search_url_text_selected=0x7f080001;
+        public static final int gray=0x7f080005;
+        public static final int skyblue=0x7f080003;
+        public static final int white=0x7f080004;
     }
     public static final class dimen {
         /**  Default height of an action bar. 
@@ -1068,8 +1071,10 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int footer_logo=0x7f020057;
-        public static final int ic_launcher=0x7f020058;
+        public static final int bi_logo=0x7f020057;
+        public static final int evil_raccoon=0x7f020058;
+        public static final int footer_logo=0x7f020059;
+        public static final int ic_launcher=0x7f02005a;
     }
     public static final class id {
         public static final int action_bar=0x7f06001c;
@@ -1104,6 +1109,7 @@ containing a value of this type.
         public static final int icon=0x7f06002a;
         public static final int ifRoom=0x7f06000a;
         public static final int image=0x7f060027;
+        public static final int imageButton1=0x7f060045;
         public static final int imageView1=0x7f06003c;
         public static final int listMode=0x7f060001;
         public static final int listView1=0x7f060042;
@@ -1195,7 +1201,8 @@ containing a value of this type.
         public static final int activity=0x7f030018;
         public static final int get_exchange_rate_layout=0x7f030019;
         public static final int item_currency=0x7f03001a;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001b;
+        public static final int main_menu=0x7f03001b;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001c;
     }
     public static final class raw {
         public static final int certificado=0x7f050000;

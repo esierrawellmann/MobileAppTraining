@@ -13,7 +13,21 @@
     vertical-align: baseline;
     border-radius: .25em;
 }
-
+.a-label-status-success
+{
+    min-width: 60px;
+    background: #4ED446;
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}
 .a-label-status-blocked
 {
     min-width: 60px;
@@ -28,4 +42,25 @@
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: .25em;
+}
+
+td.details-control {
+    background: url('../images/more_icon.gif') no-repeat center center;
+    cursor: pointer;
+}
+tr.details td.details-control {
+    background: url('../images/more_icon.gif') no-repeat center center;
+}
+
+.expand-form {
+position: absolute;
+top: -50px;
+right: 0px;
+}
+
+#transactions_filter{
+
+}
+#transactions_wrapper{
+
 }

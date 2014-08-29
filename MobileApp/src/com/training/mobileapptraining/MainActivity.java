@@ -1,6 +1,7 @@
 package com.training.mobileapptraining;
 
 
+import com.pixate.freestyle.PixateFreestyle;
 import com.training.mobileapptraining.R;
 import com.digitalgeko.mobileapptraining.dto.response.GetExchangeRateByDateResponse;
 import com.digitalgeko.mobileapptraining.dto.response.GetExchangeRateResponse;
@@ -25,6 +26,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		PixateFreestyle.init(this);
         setContentView(R.layout.activity);
         setTitle(R.string.app_title);
 	}
